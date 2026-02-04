@@ -20,7 +20,7 @@ async function main() {
     try {
       const result = await runAgent(initialTask, tools);
       spinner.stop();
-      console.log(chalk.blue.bold("\nOrbital:"), result, "\n");
+      console.log(chalk.blue.bold("\nEmbryo:"), result, "\n");
     } catch (error) {
       spinner.fail("An error occurred.");
       console.error(chalk.red(error.stack));
@@ -28,7 +28,7 @@ async function main() {
     process.exit(0);
   }
 
-  console.log(chalk.cyan.bold("\nWelcome to Orbital - Your Local AI Agent\n"));
+  console.log(chalk.cyan.bold("\nWelcome to Embryo - Your Local AI Agent\n"));
   console.log(chalk.dim("Type 'exit' to quit.\n"));
   
   while (true) {
@@ -51,7 +51,7 @@ async function main() {
     try {
       const result = await runAgent(input, tools);
       spinner.stop();
-      console.log(chalk.blue.bold("\nOrbital:"), result, "\n");
+      console.log(chalk.blue.bold("\nEmbryo:"), result, "\n");
     } catch (error) {
       spinner.fail("An error occurred.");
       console.error(chalk.red(error.stack));

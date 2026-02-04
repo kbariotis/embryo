@@ -1,9 +1,9 @@
 ---
-description: how to run the Orbital agent
+description: how to run the Embryo agent
 ---
-# Running the Orbital Agent
+# Running the Embryo Agent
 
-This workflow describes how to start and interact with the Orbital AI agent.
+This workflow describes how to start and interact with the Embryo AI agent.
 
 1. Ensure environment variables are set up in `.env` (requires `GEMINI_API_KEY`).
 

@@ -1,9 +1,9 @@
 ---
-description: how to add a new tool to Orbital
+description: how to add a new tool to Embryo
 ---
-# Adding a New Tool to Orbital
+# Adding a New Tool to Embryo
 
-To expand Orbital's capabilities, follow these steps to add a new tool.
+To expand Embryo's capabilities, follow these steps to add a new tool.
 
 ## 1. Create or Modify Tool File
 If adding to an existing category, edit `src/tools/terminal.js` or `src/tools/browser.js`.
@@ -44,8 +44,8 @@ N. my_new_tool({"arg1": "value"}): Description of what it does.
 ```
 
 ## 4. Update Documentation
-- Add the new tool to the [README](file:///Users/user/.gemini/antigravity/scratch/orbital/README.md).
-- If you created a new tool file, update the tool execution flow in [DIAGRAMS.md](file:///Users/user/.gemini/antigravity/scratch/orbital/DIAGRAMS.md).
+- Add the new tool to the [README](../../README.md).
+- If you created a new tool file, update the tool execution flow in [DIAGRAMS.md](../../DIAGRAMS.md).
 
 ---
 

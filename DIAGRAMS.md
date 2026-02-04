@@ -1,10 +1,10 @@
 # System Architecture Diagrams
 
-This document visualizes the core flows of Orbital to help maintainers and future agents understand the project logic quickly.
+This document visualizes the core flows of Embryo to help maintainers and future agents understand the project logic quickly.
 
 ## ReAct Loop Flow
 
-The ReAct (Reasoning + Acting) loop is the heart of Orbital.
+The ReAct (Reasoning + Acting) loop is the heart of Embryo.
 
 ```mermaid
 graph TD
@@ -24,7 +24,7 @@ graph TD
 
 ## Tool Execution Flow
 
-How Orbital interfaces with the local system.
+How Embryo interfaces with the local system.
 
 ```mermaid
 graph LR

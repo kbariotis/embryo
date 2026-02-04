@@ -1,10 +1,10 @@
-# Orbital 🚀
+# Embryo 🚀
 
-Orbital is an autonomous local AI agent designed to interact with your computer. It uses a ReAct loop to reason about tasks and execute them using terminal and browser tools.
+Embryo is an autonomous local AI agent designed to interact with your computer. It uses a ReAct loop to reason about tasks and execute them using terminal and browser tools.
 
 ## Architecture 🏗️
 
-Orbital is built with Node.js and integrates with Google's Gemini models.
+Embryo is built with Node.js and integrates with Google's Gemini models.
 
 - **ReAct Loop (`src/agent.js`)**: The core engine that handles the Thought-Action-Observation cycle.
 - **LLM Integration (`src/llm.js`)**: Simple wrapper for Gemini API calls.
@@ -28,7 +28,7 @@ Orbital is built with Node.js and integrates with Google's Gemini models.
    - Copy `.env.example` to `.env`.
    - Add your `GEMINI_API_KEY`.
 
-### Running Orbital
+### Running Embryo
 ```bash
 npm start
 ```
@@ -40,11 +40,11 @@ npm start "Analyze the files in the current directory"
 ## Maintenance for Coding Agents 🤖
 
 > [!IMPORTANT]
-> To ensure Orbital remains easy to onboard for future agents, always update the following when making changes:
+> To ensure Embryo remains easy to onboard for future agents, always update the following when making changes:
 > - **Tool Changes**: If you add, remove, or modify a tool's signature, update the `SYSTEM_PROMPT` in `src/agent.js` and this README.
 > - **Logic Changes**: If you change the ReAct loop or core flow, update `DIAGRAMS.md`.
-> - **New Tools**: Use the [add-tool workflow](file:///Users/user/.gemini/antigravity/scratch/orbital/.agent/workflows/add-tool.md) to ensure consistency.
+> - **New Tools**: Use the [add-tool workflow](.agent/workflows/add-tool.md) to ensure consistency.
 
 ---
 
-*Orbital - Expanding your reach through autonomous local action.*
+*Embryo - Expanding your reach through autonomous local action.*
