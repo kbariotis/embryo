@@ -1,9 +1,10 @@
 import { chat } from './llm.js';
 import chalk from 'chalk';
 import { getSystemPrompt } from './prompt.js';
+import inquirer from 'inquirer';
 
 
-export async function runAgent(userInput, tools) {
+export async function runAgent(userInput, tools, spinner) {
   const systemPromptWithTime = getSystemPrompt();
 
   let messages = [{ role: 'user', parts: [{ text: userInput }] }];
@@ -33,28 +34,48 @@ export async function runAgent(userInput, tools) {
       
       console.log(chalk.yellow(`Action: ${toolName}(${argsRaw})`));
       
-      const tool = tools[toolName];
       let observation;
-      if (tool) {
-        try {
-          let args = {};
-          if (argsRaw && argsRaw !== '{}') {
-            try {
-              args = JSON.parse(argsRaw);
-            } catch (e) {
-              // Try to fix common JSON errors if any, or just fail
-              observation = `Error parsing arguments as JSON: ${e.message}. Please use the format tool_name({"arg": "val"})`;
-            }
+
+      if (toolName === 'execute_command') {
+        if (spinner) spinner.stop();
+        const { confirmed } = await inquirer.prompt([
+          {
+            type: 'confirm',
+            name: 'confirmed',
+            message: chalk.red.bold(`Allow host command: ${argsRaw}?`),
+            default: false
           }
-          
-          if (!observation) {
-            observation = await tool(args);
-          }
-        } catch (error) {
-          observation = `Error executing ${toolName}: ${error.message}`;
+        ]);
+        if (spinner) spinner.start();
+
+        if (!confirmed) {
+          observation = "User rejected the command. Please try an alternative approach or use the sandbox if appropriate.";
         }
-      } else {
-        observation = `Tool ${toolName} not found.`;
+      }
+
+      if (!observation) {
+        const tool = tools[toolName];
+        if (tool) {
+          try {
+            let args = {};
+            if (argsRaw && argsRaw !== '{}') {
+              try {
+                args = JSON.parse(argsRaw);
+              } catch (e) {
+                // Try to fix common JSON errors if any, or just fail
+                observation = `Error parsing arguments as JSON: ${e.message}. Please use the format tool_name({"arg": "val"})`;
+              }
+            }
+            
+            if (!observation) {
+              observation = await tool(args);
+            }
+          } catch (error) {
+            observation = `Error executing ${toolName}: ${error.message}`;
+          }
+        } else {
+          observation = `Tool ${toolName} not found.`;
+        }
       }
       
       console.log(chalk.magenta(`Observation: ${observation.slice(0, 150)}${observation.length > 150 ? '...' : ''}`));

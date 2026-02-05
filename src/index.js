@@ -18,7 +18,7 @@ async function main() {
     console.log(chalk.cyan.bold("\n--- Running Task:"), initialTask, chalk.cyan.bold("---\n"));
     const spinner = ora('Agent is thinking...').start();
     try {
-      const result = await runAgent(initialTask, tools);
+      const result = await runAgent(initialTask, tools, spinner);
       spinner.stop();
       console.log(chalk.blue.bold("\nEmbryo:"), result, "\n");
     } catch (error) {
@@ -49,7 +49,7 @@ async function main() {
 
     const spinner = ora('Agent is thinking...').start();
     try {
-      const result = await runAgent(input, tools);
+      const result = await runAgent(input, tools, spinner);
       spinner.stop();
       console.log(chalk.blue.bold("\nEmbryo:"), result, "\n");
     } catch (error) {

@@ -39,3 +39,19 @@ export async function list_files({ directory = '.' } = {}) {
     return `Error: ${error.message}`;
   }
 }
+
+export async function execute_sandboxed_command({ command }) {
+  try {
+    if (!command) return "Error: No command provided.";
+    
+    // Use a persistent Docker volume for the sandbox
+    const volumeName = 'embryo_sandbox';
+    const dockerCommand = `docker run --rm -v ${volumeName}:/workspace alpine sh -c "cd /workspace && ${command.replace(/"/g, '\\"')}"`;
+    
+    const { stdout, stderr } = await execAsync(dockerCommand);
+    const output = (stdout + stderr).trim() || "Success (no output)";
+    return `[Sandbox: /workspace]\n${output}`;
+  } catch (error) {
+    return `Error (Sandbox): ${error.message}`;
+  }
+}
