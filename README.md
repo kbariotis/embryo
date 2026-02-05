@@ -4,10 +4,14 @@ Embryo is an autonomous local AI agent designed to interact with your computer. 
 
 ## Architecture 🏗️
 
-Embryo is built with Node.js and integrates with Google's Gemini models.
+Embryo is built with Node.js and integrates with multiple LLM providers:
+- **Google Gemini** (Gemini 2.0 Flash Lite by default)
+- **Anthropic Claude** (Claude 3.5 Sonnet by default)
+- **OpenAI GPT** (GPT-4o by default)
+- **Ollama** (Local models)
 
 - **ReAct Loop (`src/agent.js`)**: The core engine that handles the Thought-Action-Observation cycle.
-- **LLM Integration (`src/llm.js`)**: Simple wrapper for Gemini API calls.
+- **LLM Integration (`src/llm.js`)**: Multi-provider wrapper with automatic detection based on environment variables.
 - **Tools (`src/tools/`)**:
   - `terminal.js`: Shell command execution, file management.
   - `browser.js`: Playwright-based browser automation with stealth.
@@ -16,7 +20,11 @@ Embryo is built with Node.js and integrates with Google's Gemini models.
 
 ### Prerequisites
 - Node.js installed.
-- A Gemini API Key from [Google AI Studio](https://aistudio.google.com/app/apikey).
+- One of the following:
+  - An **Anthropic API Key** (Highest priority)
+  - An **OpenAI API Key**
+  - **Ollama** running locally
+  - A **Gemini API Key** from [Google AI Studio](https://aistudio.google.com/app/apikey)
 
 ### Installation
 1. Clone the repository (or navigate to the project folder).
@@ -26,7 +34,8 @@ Embryo is built with Node.js and integrates with Google's Gemini models.
    ```
 3. Set up environment variables:
    - Copy `.env.example` to `.env`.
-   - Add your `GEMINI_API_KEY`.
+   - Add the API key for your preferred provider (e.g., `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, or `GEMINI_API_KEY`).
+   - If using Ollama, ensure `OLLAMA_MODEL` is set and the Ollama service is running.
 
 ### Running Embryo
 ```bash
