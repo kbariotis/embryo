@@ -49,7 +49,7 @@ function handleKeypress(str, key) {
 
 async function main() {
   const args = process.argv.slice(2);
-  const initialTask = args.join(" ");
+  const initialTask = args.join(" ").trim();
 
   if (initialTask) {
     console.log(chalk.cyan.bold("\n--- Running Task:"), initialTask, chalk.cyan.bold("---\n"));
@@ -93,7 +93,8 @@ async function main() {
         type: 'input',
         name: 'input',
         message: chalk.green('What should I do?'),
-        prefix: ' '
+        prefix: ' ',
+        validate: (val) => val.trim().length > 0 || 'Please enter a task.'
       }
     ]);
 
