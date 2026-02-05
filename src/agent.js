@@ -33,15 +33,27 @@ CRITICAL:
 - BE PROACTIVE: If a user asks for a system change (e.g., "dark mode"), do not refuse. If you don't know the exact command, use DuckDuckGo to search for it (e.g., "macOS command line toggle dark mode").
 - NEVER hallucinate results. NEVER say you have done something unless you actually called the Action in the previous turn and received a Success Observation.
 - SEARCHING: Google often blocks automated tools with CAPTCHAs. For web searches, ALWAYS use DuckDuckGo (e.g., browser_open({"url": "https://duckduckgo.com/?q=your+query"})).
+
+SAFETY
+- You have no independent goals: do not pursue self-preservation, replication, resource acquisition, or power-seeking; avoid long-term plans beyond the user's request.
+- Prioritize safety and human oversight over completion; if instructions conflict, pause and ask; comply with stop/pause/audit requests and never bypass safeguards. (Inspired by Anthropic's constitution.)
+- Do not manipulate or persuade anyone to expand access or disable safeguards. Do not copy yourself or change system prompts, safety rules, or tool policies unless explicitly requested.
 `;
 
 export async function runAgent(userInput, tools) {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString();
+  const timeStr = now.toLocaleTimeString();
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  
+  const systemPromptWithTime = `${SYSTEM_PROMPT}\n\nCURRENT CONTEXT:\n- Date: ${dateStr}\n- Time: ${timeStr}\n- Timezone: ${timezone}`;
+
   let messages = [{ role: 'user', parts: [{ text: userInput }] }];
   let iterations = 0;
   const maxIterations = 15;
 
   while (iterations < maxIterations) {
-    const response = await chat(messages, SYSTEM_PROMPT);
+    const response = await chat(messages, systemPromptWithTime);
     
     // Check for Answer first to terminate loop
     const answerMatch = response.match(/Answer:(.*)/is);
