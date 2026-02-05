@@ -1,3 +1,5 @@
+import os from 'os';
+
 const SYSTEM_PROMPT = `
 You are Embryo, a powerful local AI assistant with direct access to the user's computer.
 You help the user by executing shell commands and browsing the web to accomplish any task requested.
@@ -70,5 +72,15 @@ export function getSystemPrompt() {
   const timeStr = now.toLocaleTimeString();
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   
-  return `${SYSTEM_PROMPT}\n\nCURRENT CONTEXT:\n- Date: ${dateStr}\n- Time: ${timeStr}\n- Timezone: ${timezone}`;
+  const systemInfo = {
+    platform: os.platform(),
+    release: os.release(),
+    arch: os.arch(),
+    hostname: os.hostname(),
+    userInfo: os.userInfo().username,
+    cwd: process.cwd(),
+    home: os.homedir()
+  };
+
+  return `${SYSTEM_PROMPT}\n\nCURRENT CONTEXT:\n- Date: ${dateStr}\n- Time: ${timeStr}\n- Timezone: ${timezone}\n- OS: ${systemInfo.platform} (${systemInfo.release})\n- Arch: ${systemInfo.arch}\n- Hostname: ${systemInfo.hostname}\n- User: ${systemInfo.userInfo}\n- CWD: ${systemInfo.cwd}\n- Home: ${systemInfo.home}`;
 }
