@@ -4,10 +4,10 @@ import { getSystemPrompt } from './prompt.js';
 import inquirer from 'inquirer';
 
 
-export async function runAgent(userInput, tools, spinner, signal) {
+export async function runAgent(userInput, tools, spinner, signal, history = []) {
   const systemPromptWithTime = getSystemPrompt();
 
-  let messages = [{ role: 'user', parts: [{ text: userInput }] }];
+  let messages = [...history, { role: 'user', parts: [{ text: userInput }] }];
   let iterations = 0;
   const maxIterations = 15;
 
@@ -29,7 +29,7 @@ export async function runAgent(userInput, tools, spinner, signal) {
     }
 
     if (answerMatch && !actionMatch) {
-      return answerMatch[1].trim();
+      return { answer: answerMatch[1].trim(), history: messages };
     }
 
     if (actionMatch) {
@@ -97,10 +97,10 @@ export async function runAgent(userInput, tools, spinner, signal) {
       messages.push({ role: 'model', parts: [{ text: response }] });
       messages.push({ role: 'user', parts: [{ text: `Observation: ${errorMsg}` }] });
     } else {
-      return answerMatch[1].trim();
+      return { answer: answerMatch[1].trim(), history: messages };
     }
     
     iterations++;
   }
-  return "Reached max iterations without a final answer.";
+  return { answer: "Reached max iterations without a final answer.", history: messages };
 }

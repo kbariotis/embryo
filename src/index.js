@@ -12,6 +12,7 @@ const tools = {
 };
 
 let currentController = null;
+let sessionHistory = [];
 
 
 function terminate() {
@@ -42,6 +43,9 @@ function handleKeypress(str, key) {
       currentController = null;
       browserTools.close_browser();
     }
+  } else if (key.ctrl && key.name === 'r') {
+    console.log(chalk.yellow("\n[Hotkey] Resetting session memory..."));
+    sessionHistory = [];
   } else if (key.ctrl && key.name === 'c') {
     terminate();
   }
@@ -53,7 +57,7 @@ async function main() {
 
   if (initialTask) {
     console.log(chalk.cyan.bold("\n--- Running Task:"), initialTask, chalk.cyan.bold("---\n"));
-    console.log(chalk.dim("Press Ctrl+S to cancel the task.\n"));
+    console.log(chalk.dim("Press Ctrl+S to cancel, Ctrl+R to reset memory.\n"));
     
     const spinner = ora('Agent is thinking...').start();
     currentController = new AbortController();
@@ -64,9 +68,10 @@ async function main() {
     }
 
     try {
-      const result = await runAgent(initialTask, tools, spinner, currentController.signal);
+      const { answer, history } = await runAgent(initialTask, tools, spinner, currentController.signal, sessionHistory);
+      sessionHistory = history;
       spinner.stop();
-      console.log(chalk.blue.bold("\nEmbryo:"), result, "\n");
+      console.log(chalk.blue.bold("\nEmbryo:"), answer, "\n");
     } catch (error) {
       if (error.name === 'AbortError' || (error.message && error.message.includes('abort'))) {
         spinner.warn("Task cancelled.");
@@ -85,7 +90,7 @@ async function main() {
   }
 
   console.log(chalk.cyan.bold("\nWelcome to Embryo - Your Local AI Agent\n"));
-  console.log(chalk.dim("Type 'exit' to quit. Use Ctrl+S to cancel current operation.\n"));
+  console.log(chalk.dim("Type 'exit' to quit. Use Ctrl+S to cancel, Ctrl+R to reset memory.\n"));
   
   while (true) {
     const { input } = await inquirer.prompt([
@@ -112,9 +117,10 @@ async function main() {
     }
 
     try {
-      const result = await runAgent(input, tools, spinner, currentController.signal);
+      const { answer, history } = await runAgent(input, tools, spinner, currentController.signal, sessionHistory);
+      sessionHistory = history;
       spinner.stop();
-      console.log(chalk.blue.bold("\nEmbryo:"), result, "\n");
+      console.log(chalk.blue.bold("\nEmbryo:"), answer, "\n");
     } catch (error) {
       if (error.name === 'AbortError' || (error.message && error.message.includes('abort'))) {
         spinner.warn("Task cancelled.");
