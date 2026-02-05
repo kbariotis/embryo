@@ -4,7 +4,7 @@ import { getSystemPrompt } from './prompt.js';
 import inquirer from 'inquirer';
 
 
-export async function runAgent(userInput, tools, spinner) {
+export async function runAgent(userInput, tools, spinner, signal) {
   const systemPromptWithTime = getSystemPrompt();
 
   let messages = [{ role: 'user', parts: [{ text: userInput }] }];
@@ -12,7 +12,11 @@ export async function runAgent(userInput, tools, spinner) {
   const maxIterations = 15;
 
   while (iterations < maxIterations) {
-    const response = await chat(messages, systemPromptWithTime);
+    if (signal?.aborted) {
+      throw new Error('Task aborted by user');
+    }
+
+    const response = await chat(messages, systemPromptWithTime, signal);
     
     // Check for Answer first to terminate loop
     const answerMatch = response.match(/Answer:(.*)/is);
@@ -54,6 +58,10 @@ export async function runAgent(userInput, tools, spinner) {
       }
 
       if (!observation) {
+        if (signal?.aborted) {
+          throw new Error('Task aborted by user');
+        }
+
         const tool = tools[toolName];
         if (tool) {
           try {
@@ -68,7 +76,7 @@ export async function runAgent(userInput, tools, spinner) {
             }
             
             if (!observation) {
-              observation = await tool(args);
+              observation = await tool(args, signal);
             }
           } catch (error) {
             observation = `Error executing ${toolName}: ${error.message}`;

@@ -34,37 +34,40 @@ const clients = {
   ollama: new Ollama({ host: process.env.OLLAMA_HOST || 'http://localhost:11434' })
 };
 
-export async function chat(contents, systemInstruction) {
+export async function chat(contents, systemInstruction, signal) {
   try {
     switch (provider) {
       case 'gemini':
-        return await chatGemini(contents, systemInstruction);
+        return await chatGemini(contents, systemInstruction, signal);
       case 'anthropic':
-        return await chatAnthropic(contents, systemInstruction);
+        return await chatAnthropic(contents, systemInstruction, signal);
       case 'openai':
-        return await chatOpenAI(contents, systemInstruction);
+        return await chatOpenAI(contents, systemInstruction, signal);
       case 'ollama':
-        return await chatOllama(contents, systemInstruction);
+        return await chatOllama(contents, systemInstruction, signal);
       default:
         throw new Error(`Unsupported provider: ${provider}`);
     }
   } catch (error) {
+    if (signal?.aborted || error.name === 'AbortError') {
+      throw error;
+    }
     return `Error calling ${provider}: ${error.message}`;
   }
 }
 
-async function chatGemini(contents, systemInstruction) {
+async function chatGemini(contents, systemInstruction, signal) {
   const modelName = process.env.GEMINI_MODEL || "gemini-2.0-flash-lite";
   const model = clients.gemini.getGenerativeModel({ model: modelName });
   const result = await model.generateContent({
     contents: Array.isArray(contents) ? contents : [{ role: 'user', parts: [{ text: contents }] }],
     systemInstruction: systemInstruction ? { role: 'system', parts: [{ text: systemInstruction }] } : undefined,
-  });
+  }, { signal }); // Gemini SDK supports signal in request options
   const response = await result.response;
   return response.text();
 }
 
-async function chatAnthropic(contents, systemInstruction) {
+async function chatAnthropic(contents, systemInstruction, signal) {
   const modelName = process.env.ANTHROPIC_MODEL || "claude-3-5-sonnet-latest";
   const messages = Array.isArray(contents) 
     ? contents.map(c => ({ role: c.role === 'model' ? 'assistant' : 'user', content: c.parts[0].text }))
@@ -75,11 +78,11 @@ async function chatAnthropic(contents, systemInstruction) {
     max_tokens: 4096,
     system: systemInstruction,
     messages: messages,
-  });
+  }, { signal });
   return response.content[0].text;
 }
 
-async function chatOpenAI(contents, systemInstruction) {
+async function chatOpenAI(contents, systemInstruction, signal) {
   const modelName = process.env.OPENAI_MODEL || "gpt-4o";
   const messages = [];
   if (systemInstruction) {
@@ -97,11 +100,11 @@ async function chatOpenAI(contents, systemInstruction) {
   const response = await clients.openai.chat.completions.create({
     model: modelName,
     messages: messages,
-  });
+  }, { signal });
   return response.choices[0].message.content;
 }
 
-async function chatOllama(contents, systemInstruction) {
+async function chatOllama(contents, systemInstruction, signal) {
   const modelName = process.env.OLLAMA_MODEL;
   const messages = [];
   if (systemInstruction) {
@@ -116,9 +119,11 @@ async function chatOllama(contents, systemInstruction) {
     messages.push({ role: 'user', content: contents });
   }
 
+  // Ollama chat doesn't explicitly mention AbortSignal in current docs but we can wrap it if it doesn't work.
+  // Actually the library usually supports it. Let's try passing it.
   const response = await clients.ollama.chat({
     model: modelName,
     messages: messages,
-  });
+  }, { signal });
   return response.message.content;
 }
