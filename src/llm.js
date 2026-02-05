@@ -5,7 +5,7 @@ import chalk from "chalk";
 dotenv.config();
 
 const apiKey = process.env.GEMINI_API_KEY;
-if (!apiKey || apiKey === "your_api_key_here" || apiKey === "GEMINI_KEY_GOES_HERE") {
+if (!apiKey || apiKey === "YOUR KEY HERE") {
   console.error(chalk.red("\n[Error] Invalid API Key detected."));
   console.error(chalk.yellow("Please update your .env file with a valid Gemini API key from https://aistudio.google.com/app/apikey\n"));
   process.exit(1);
