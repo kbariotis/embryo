@@ -21,8 +21,8 @@ TOOLS:
 3. write_file({"filename": "out.txt", "content": "hello"}): Saves content to a file.
 4. list_files({"directory": "."}): Lists files in a directory.
 5. browser_open({"url": "google.com"}): Opens a URL.
-6. browser_click({"selector": "button"}): Clicks an element.
-7. browser_type({"selector": "input", "text": "hello"}): Types into an input.
+6. browser_click({"selector": "button"}): Clicks an element. You can use CSS selectors or text-based selectors like 'text="Accept"'. If you provide just a word (e.g., "Accept"), it will try to find a button/element with that text.
+7. browser_type({"selector": "input", "text": "hello"}): Types into an input. Supports CSS and text-based selectors.
 8. browser_get_content({}): Returns the text content of the current page.
 
 RULES:
